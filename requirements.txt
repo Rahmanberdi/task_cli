@@ -1,0 +1,9 @@
+annotated-doc==0.0.4
+click==8.3.1
+markdown-it-py==4.0.0
+mdurl==0.1.2
+Pygments==2.19.2
+rich==14.3.2
+shellingham==1.5.4
+-e git+https://github.com/Rahmanberdi/task_cli.git@13b20b7f7a810fdce9904a2f4b7f2c0911b67518#egg=task_cli
+typer==0.23.0
