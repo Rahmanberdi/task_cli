@@ -67,7 +67,26 @@ def update(
         todo['updated_at'] = datetime.now().isoformat()
         save_todos(todos)
         typer.echo("✅ Your task was updated successfully!")
+    else:
+        typer.echo("There was no such task with that ID number.")
 
+"""Delete task"""
+@app.command()
+def delete(
+    id:int = typer.Argument(...,help="The ID you want to update"),
+    ):
+    todos = load_todos()
+    todo = None
+    for item in todos:
+        if item['id']==id:
+            todo = item
+            break
+    if todo:
+        del todos[id-1]
+        save_todos(todos)
+        typer.echo("🗑️✅ Your task was deleted successfully!")
+    else:
+        typer.echo("There was no such task with that ID number.")
 
 """list command"""
 @app.command()
