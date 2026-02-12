@@ -9,13 +9,13 @@ from enum import Enum
 app = typer.Typer()
 
 """json path"""
-TODO_FILE = Path("todos.json")
+TODO_FILE = Path("tasks.json")
 
 """Status class for the status of task"""
 class Status(str, Enum):
     """Task status enum"""
     TODO = "todo"
-    IN_PROGRESS = "in_progress"
+    IN_PROGRESS = "in-progress"
     DONE = "done"
 
     def __str__(self):
@@ -39,8 +39,12 @@ def add(task: str = typer.Argument(...,help="The task description"),
     status: Status = typer.Argument(Status.TODO,help="Initial status")
 ):
     todos = load_todos()
+    try: 
+        id = todos[-1]['id']+1
+    except:
+        id = 1
     todo = {
-        "id":todos[-1]['id']+1,
+        "id":id,
         "task":task,
         "status":status.value,
         "created_at":datetime.now().isoformat(),
@@ -49,6 +53,37 @@ def add(task: str = typer.Argument(...,help="The task description"),
     todos.append(todo)
     save_todos(todos)
     typer.echo(f"✅ Task added successfully: (ID:{todo['id']})")
+@app.command(name="mark-in-progress")
+def mark_in_progress(id:int = typer.Argument(...,help="The ID you want to update")):
+    todos = load_todos()
+    todo = None
+    for item in todos:
+        if item['id']==id:
+            todo = item
+            break
+    if todo:
+        todo['status'] = "in-progress"
+        todo['updated_at'] = datetime.now().isoformat()
+        save_todos(todos)
+        typer.echo("✅ Your task was updated successfully!")
+    else:
+        typer.echo("There was no such task with that ID number.")
+
+@app.command(name="mark-done")
+def mark_in_progress(id:int = typer.Argument(...,help="The ID you want to update")):
+    todos = load_todos()
+    todo = None
+    for item in todos:
+        if item['id']==id:
+            todo = item
+            break
+    if todo:
+        todo['status'] = "done"
+        todo['updated_at'] = datetime.now().isoformat()
+        save_todos(todos)
+        typer.echo("✅ Your task was updated successfully!")
+    else:
+        typer.echo("There was no such task with that ID number.")
 
 
 """Update task"""
@@ -90,9 +125,12 @@ def delete(
         typer.echo("There was no such task with that ID number.")
 
 """list command"""
+
 @app.command()
 def list(status: Status = typer.Argument(None,help="Initial status")):
+
     """List all todos"""
+
     todos = load_todos()
     if todos:
         if status!=None:
