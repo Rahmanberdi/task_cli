@@ -21,6 +21,7 @@ class Status(str, Enum):
     def __str__(self):
         return self.value
 
+
 """Loading json"""    
 def load_todos():
     if TODO_FILE.exists():
@@ -35,11 +36,11 @@ def save_todos(todos):
 """Add command"""
 @app.command()
 def add(task: str = typer.Argument(...,help="The task description"),
-    status: Status = typer.Option(Status.TODO,help="Initial status")
+    status: Status = typer.Argument(Status.TODO,help="Initial status")
 ):
     todos = load_todos()
     todo = {
-        "id":len(todos)+1,
+        "id":todos[-1]['id']+1,
         "task":task,
         "status":status.value,
         "created_at":datetime.now().isoformat(),
@@ -90,17 +91,36 @@ def delete(
 
 """list command"""
 @app.command()
-def list():
+def list(status: Status = typer.Argument(None,help="Initial status")):
     """List all todos"""
     todos = load_todos()
+    if todos:
+        if status!=None:
+            filtered_todos = [todo for todo in todos if todo['status']==status.value]
+            if filtered_todos:
+                typer.echo("\n📋 Your todos:")
+                typer.echo("-"*30)
+                for todo in filtered_todos:
+                    typer.echo(f"[{todo['id']}] {todo['task']}")
+                return
+            else:
+                typer.echo(f"There is no task that is {status.value}")    
+                return
+        else:
+            typer.echo("\n📋 Your tasks:")
+            typer.echo("-"*30)
+            for todo in todos:
+                typer.echo(f"[{todo['id']}] {todo['task']} status:{todo['status']}")
+            return
     if not todos:
-        typer.echo("📭 No todos yet")
+        typer.echo("📭 No tasks yet")
         return
 
-    typer.echo("\n📋 Your todos:")
+    typer.echo("\n📋 Your tasks:")
     typer.echo("-"*30)
     for todo in todos:
         typer.echo(f"[{todo['id']}] {todo['task']} status:{todo['status']}")
-    
+
+
 if __name__ == "__main__":
     app()
