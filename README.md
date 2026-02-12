@@ -1,6 +1,6 @@
 # Task CLI 📋
 
-A simple command-line task manager built with Python.
+A simple command-line task manager built in Python for the [Task Tracker project](https://roadmap.sh/projects/task-tracker) on roadmap.sh.
 
 ---
 
