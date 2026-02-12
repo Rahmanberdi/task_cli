@@ -1,12 +1,17 @@
+"""Libraries of project"""
 import typer 
 import json
 from pathlib import Path
-from typing import Optional
 from datetime import datetime
 from enum import Enum
+
+"""Start Typer app"""
 app = typer.Typer()
+
+"""json path"""
 TODO_FILE = Path("todos.json")
 
+"""Status class for the status of task"""
 class Status(str, Enum):
     """Task status enum"""
     TODO = "todo"
@@ -15,17 +20,19 @@ class Status(str, Enum):
 
     def __str__(self):
         return self.value
-    
+
+"""Loading json"""    
 def load_todos():
     if TODO_FILE.exists():
         return json.loads(TODO_FILE.read_text())
     return []
 
+"""Saving json"""
 def save_todos(todos):
     TODO_FILE.write_text(json.dumps(todos,indent=2))
 
 
-
+"""Add command"""
 @app.command()
 def add(task: str = typer.Argument(...,help="The task description"),
     status: Status = typer.Option(Status.TODO,help="Initial status")
@@ -43,6 +50,7 @@ def add(task: str = typer.Argument(...,help="The task description"),
     typer.echo(f"✅ Task added successfully: (ID:{todo['id']})")
 
 
+"""list command"""
 @app.command()
 def list():
     """List all todos"""
