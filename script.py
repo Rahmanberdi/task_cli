@@ -50,6 +50,25 @@ def add(task: str = typer.Argument(...,help="The task description"),
     typer.echo(f"✅ Task added successfully: (ID:{todo['id']})")
 
 
+"""Update task"""
+@app.command()
+def update(
+    id:int = typer.Argument(...,help="The ID you want to update"),
+    task:str = typer.Argument(...,help = "Write task that you want to be new")
+    ):
+    todos = load_todos()
+    todo = None
+    for item in todos:
+        if item['id']==id:
+            todo = item
+            break
+    if todo:
+        todo['task']=task
+        todo['updated_at'] = datetime.now().isoformat()
+        save_todos(todos)
+        typer.echo("✅ Your task was updated successfully!")
+
+
 """list command"""
 @app.command()
 def list():
